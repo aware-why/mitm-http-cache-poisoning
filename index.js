@@ -16,7 +16,7 @@ var mListBuf = new Buffer( Object.keys(mTargetMap).join('\n') );
 var mStub = fs.readFileSync('./asset/stub.js', 'utf8');
 
 // 开启服务
-app.listen(8080, function() {
+app.listen(8888, function() {
     console.log('running...');
 });
 
@@ -26,12 +26,18 @@ app.use(function(req, res, next) {
     if (m) {
         req.url = m[1];
     }
+    
     next();
 });
 
 // 缓存列表
 app.get('/__get_poisoning_list__', function(req, res, next) {
-    res.send(mListBuf);
+    console.log('Retriving the posion list!');
+    var reshd = {
+	"Access-Control-Allow-Origin": "*"
+	};
+    res.writeHead(200, reshd);
+    res.end(mListBuf);
 });
 
 // 缓存内容
@@ -45,6 +51,7 @@ app.use(function(req, res, next) {
         return next();
     }
 
+    console.log('mitm: [%s] intercepting!', url);
     // 响应内容
     var buf = target._buf;
     if (!buf) {
@@ -67,6 +74,8 @@ app.use(function(req, res, next) {
         reshd['ETag'] = target.etag;
     }
 
+
+    console.log('mitm: intercepted!');
     // 发送
     res.writeHead(200, reshd);
     res.end(buf);
