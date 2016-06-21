@@ -36,7 +36,7 @@ app.get('/__get_poisoning_list__', function(req, res, next) {
     var reshd = {
 	"Access-Control-Allow-Origin": "*"
 	};
-    res.writeHead(200, reshd);
+    //res.writeHead(200, reshd);
     res.end(mListBuf);
 });
 
